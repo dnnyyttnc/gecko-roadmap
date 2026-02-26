@@ -48,6 +48,11 @@
         .search-input { padding:5px 12px; border-radius:6px; font-size:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); outline:none; width:180px; font-family:inherit; }
         .search-input:focus { border-color:var(--accent-green); }
         .toolbar-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+        .sync-indicator { font-size:10px; font-weight:500; padding:4px 10px; border-radius:20px; border:1px solid var(--border); color:var(--text-muted); transition:all 0.3s; white-space:nowrap; }
+        .sync-saving { color:var(--accent-yellow); border-color:var(--accent-yellow); }
+        .sync-synced { color:var(--accent-green); border-color:var(--accent-green); }
+        .sync-offline { color:var(--accent-orange); border-color:var(--accent-orange); }
+        .sync-conflict { color:var(--accent-blue); border-color:var(--accent-blue); }
         /* Timeline Header */
         /* Scroll wrapper */
         .main-scroll { position:relative; overflow-x:auto; overflow-y:visible; scroll-behavior:smooth; }
@@ -392,18 +397,97 @@ const State = {
 };
 
 // ============================================================
-// PERSISTENCE
+// PERSISTENCE (localStorage + Remote Sync via Vercel KV)
 // ============================================================
 const Store = {
   KEY: 'gecko_roadmap_2026',
-  save(d) { try { localStorage.setItem(this.KEY, JSON.stringify(d)); } catch(e) {} },
-  load() { try { const r=localStorage.getItem(this.KEY); return r?JSON.parse(r):null; } catch(e) { return null; } },
+  API: '/api/roadmap',
+
+  // --- LOCAL ---
+  _saveLocal(d) {
+    try { localStorage.setItem(this.KEY, JSON.stringify(d)); } catch(e) {}
+  },
+  _loadLocal() {
+    try { const r=localStorage.getItem(this.KEY); return r?JSON.parse(r):null; } catch(e) { return null; }
+  },
+
+  // --- REMOTE ---
+  async _saveRemote(d) {
+    this._setSyncStatus('saving');
+    try {
+      const res = await fetch(this.API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(d)
+      });
+      if (res.status === 409) {
+        this._setSyncStatus('conflict');
+        await this._syncFromRemote();
+        return;
+      }
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      this._setSyncStatus('synced');
+    } catch(e) {
+      this._setSyncStatus('offline');
+      console.warn('Remote save failed, working offline:', e.message);
+    }
+  },
+
+  async _loadRemote() {
+    try {
+      const res = await fetch(this.API);
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch(e) {
+      console.warn('Remote load failed, using local data:', e.message);
+      return null;
+    }
+  },
+
+  _migrateQuarters(d) {
+    if(d.tasks) d.tasks.forEach(t=>{if(t.quarter&&!t.quarter.includes('-'))t.quarter=t.quarter+'-2026';});
+    if(d.streams) d.streams.forEach(s=>{if(s.goals){const ng={};Object.keys(s.goals).forEach(k=>{ng[k.includes('-')?k:k+'-2026']=s.goals[k];});s.goals=ng;}});
+    if(d.meta&&d.meta.currentQuarter&&!d.meta.currentQuarter.includes('-'))d.meta.currentQuarter=d.meta.currentQuarter+'-2026';
+  },
+
+  async _syncFromRemote() {
+    const remote = await this._loadRemote();
+    if (!remote) return;
+    const localVer = State.data ? State.data.meta.version : 0;
+    if (remote.meta.version > localVer) {
+      this._migrateQuarters(remote);
+      this._saveLocal(remote);
+      State.init(remote);
+      Renderer.render(State.data);
+      DragDrop.init();
+      toast('Roadmap aktualisiert (v' + remote.meta.version + ')');
+      this._setSyncStatus('synced');
+    }
+  },
+
+  // --- PUBLIC API ---
+  save(d) {
+    this._saveLocal(d);
+    this._saveRemote(d);
+  },
+
+  async load() {
+    const remote = await this._loadRemote();
+    const local = this._loadLocal();
+    if (remote && local) {
+      return remote.meta.version >= local.meta.version ? remote : local;
+    }
+    return remote || local || null;
+  },
+
   exportJSON(d) {
     const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
     const a=document.createElement('a'); a.href=URL.createObjectURL(b);
     a.download='gecko_roadmap_'+d.meta.lastUpdated+'.json'; a.click();
     URL.revokeObjectURL(a.href); toast('JSON exportiert');
   },
+
   importJSON(file) {
     return new Promise((res,rej)=>{
       const r=new FileReader();
@@ -411,7 +495,47 @@ const Store = {
       r.readAsText(file);
     });
   },
-  reset() { localStorage.removeItem(this.KEY); location.reload(); }
+
+  reset() { localStorage.removeItem(this.KEY); location.reload(); },
+
+  // --- POLLING ---
+  startPolling(intervalMs) {
+    setInterval(async ()=>{
+      if (document.hidden) return;
+      try {
+        const res = await fetch(this.API + '?versionOnly=1');
+        if (!res.ok) return;
+        const r = await res.json();
+        const localVer = State.data ? State.data.meta.version : 0;
+        if (r.version > localVer) {
+          await this._syncFromRemote();
+        }
+      } catch(e) {}
+    }, intervalMs);
+  },
+
+  // --- SYNC INDICATOR ---
+  _setSyncStatus(status) {
+    const el = document.getElementById('sync-indicator');
+    if (!el) return;
+    const labels = {
+      saving:   { text: '\u2191 Speichern\u2026', cls: 'sync-saving' },
+      synced:   { text: '\u2713 Gespeichert', cls: 'sync-synced' },
+      offline:  { text: '\u26A0 Offline', cls: 'sync-offline' },
+      conflict: { text: '\u21BB Aktualisieren\u2026', cls: 'sync-conflict' }
+    };
+    const s = labels[status] || labels.synced;
+    el.textContent = s.text;
+    el.className = 'sync-indicator ' + s.cls;
+    if (status === 'synced') {
+      setTimeout(()=>{
+        if (el.textContent === '\u2713 Gespeichert') {
+          el.textContent = '\u2713 Sync';
+          el.className = 'sync-indicator';
+        }
+      }, 3000);
+    }
+  }
 };
 
 // ============================================================
@@ -651,6 +775,12 @@ const Renderer = {
     // Right side
     const right = document.createElement('div');
     right.className = 'toolbar-right';
+    // Sync indicator
+    const syncEl = document.createElement('span');
+    syncEl.id = 'sync-indicator';
+    syncEl.className = 'sync-indicator';
+    syncEl.textContent = '\u2713 Sync';
+    right.appendChild(syncEl);
     [{icon:'\u{1F4CA}',label:' Workload',fn:()=>App.toggleWorkload()},
      {icon:'\u2B07',label:' Export',fn:()=>Store.exportJSON(State.data)},
      {icon:'\u2B06',label:' Import',fn:()=>document.getElementById('import-input').click()},
@@ -1310,25 +1440,32 @@ const Filters = {
 // APP
 // ============================================================
 const App = {
-  init() {
-    const saved=Store.load();
+  async init() {
+    // Show loading state while fetching remote data
+    const appEl=document.getElementById('app');
+    const loadingDiv=document.createElement('div');
+    loadingDiv.style.cssText='padding:60px;text-align:center;color:var(--text-muted);font-size:14px;';
+    loadingDiv.textContent='Roadmap wird geladen\u2026';
+    appEl.appendChild(loadingDiv);
+
+    const saved=await Store.load();
     if(saved){
-      // Migrate old quarter format (Q1 -> Q1-2026)
-      if(saved.tasks) saved.tasks.forEach(t=>{if(t.quarter&&!t.quarter.includes('-'))t.quarter=t.quarter+'-2026';});
-      if(saved.streams) saved.streams.forEach(s=>{if(s.goals){const ng={};Object.keys(s.goals).forEach(k=>{ng[k.includes('-')?k:k+'-2026']=s.goals[k];});s.goals=ng;}});
-      if(saved.meta&&saved.meta.currentQuarter&&!saved.meta.currentQuarter.includes('-'))saved.meta.currentQuarter=saved.meta.currentQuarter+'-2026';
+      Store._migrateQuarters(saved);
     }
     State.init(saved||INITIAL_DATA);
     State.subscribe(d=>{Store.save(d);Renderer.render(d);});
     Renderer.render(State.data);
 
-    document.getElementById('app').addEventListener('click',e=>{
+    // Start polling for remote changes (every 60s)
+    Store.startPolling(60000);
+
+    appEl.addEventListener('click',e=>{
       const dot=e.target.closest('[data-action="cycle-status"]');
       if(dot){const el=dot.closest('.task-item');if(el)Editor.cycleStatus(el.dataset.taskId);return;}
       const nameEl=e.target.closest('.task-name');
       if(nameEl){const el=nameEl.closest('.task-item');if(el)Editor.startInlineEdit(el);return;}
     });
-    document.getElementById('app').addEventListener('dblclick',e=>{
+    appEl.addEventListener('dblclick',e=>{
       const el=e.target.closest('.task-item');
       if(el&&el.dataset.taskId){e.preventDefault();Editor.openModal(el.dataset.taskId);}
     });
@@ -1337,7 +1474,7 @@ const App = {
     });
     document.getElementById('import-input').addEventListener('change',async e=>{
       if(!e.target.files[0]) return;
-      try{const d=await Store.importJSON(e.target.files[0]);State.init(d);Renderer.render(State.data);toast('Importiert');}
+      try{const d=await Store.importJSON(e.target.files[0]);State.init(d);Store.save(d);Renderer.render(State.data);toast('Importiert');}
       catch(err){alert('Import fehlgeschlagen: '+err.message);}
       e.target.value='';
     });
