@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GECKO.AI Roadmap 2026</title>
+    <title>GECKO.AI Roadmap 2026\u20132028</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -49,32 +49,40 @@
         .search-input:focus { border-color:var(--accent-green); }
         .toolbar-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
         /* Timeline Header */
-        .timeline-header { display:grid; grid-template-columns:240px repeat(4,1fr); padding:0 48px; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; background:var(--bg); }
-        .timeline-header .label { padding:14px 0; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:600; }
-        .quarter-header { padding:14px 12px; text-align:center; border-left:1px solid var(--border); }
-        .quarter-header .q-name { font-size:14px; font-weight:700; margin-bottom:2px; }
-        .quarter-header .q-months { font-size:11px; color:var(--text-muted); }
+        .timeline-header { position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--border); }
+        .year-header { display:grid; grid-template-columns:240px repeat(12,minmax(110px,1fr)); padding:0 48px; }
+        .year-header .label { padding:6px 0 0; }
+        .year-cell { grid-column:span 4; text-align:center; font-size:13px; font-weight:700; padding:6px 0 2px; color:var(--text-muted); border-left:2px solid var(--border); }
+        .year-cell:first-of-type { border-left:none; }
+        .year-cell.current { color:var(--accent-green); }
+        .quarter-row { display:grid; grid-template-columns:240px repeat(12,minmax(110px,1fr)); padding:0 48px; }
+        .quarter-row .label { padding:8px 0; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:600; }
+        .quarter-header { padding:8px 6px; text-align:center; border-left:1px solid var(--border); }
+        .quarter-header.year-start { border-left:2px solid var(--border); }
+        .quarter-header .q-name { font-size:13px; font-weight:700; margin-bottom:1px; }
+        .quarter-header .q-months { font-size:10px; color:var(--text-muted); }
         .quarter-header.current { background:var(--accent-green-dim); }
         .quarter-header.current .q-name { color:var(--accent-green); }
-        .now-indicator { font-size:9px; font-weight:700; color:var(--accent-green); background:var(--accent-green-dim); padding:2px 6px; border-radius:3px; letter-spacing:0.5px; }
+        .now-indicator { font-size:8px; font-weight:700; color:var(--accent-green); background:var(--accent-green-dim); padding:1px 4px; border-radius:3px; letter-spacing:0.5px; }
         /* Content */
-        .content { padding:0 48px; }
+        .content { padding:0 48px; overflow-x:auto; }
         .stream-section { border-bottom:1px solid var(--border); }
         .stream-header { display:grid; grid-template-columns:240px 1fr; min-height:60px; }
         .stream-info { padding:14px 0; display:flex; align-items:center; gap:10px; }
         .stream-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
         .stream-name { font-size:13px; font-weight:600; }
         .stream-meta { font-size:11px; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
-        .stream-timeline { display:grid; grid-template-columns:repeat(4,1fr); }
+        .stream-timeline { display:grid; grid-template-columns:repeat(12,minmax(110px,1fr)); }
         .quarter-col { border-left:1px solid var(--border); min-height:60px; padding:6px; display:flex; flex-direction:column; gap:4px; position:relative; }
         .quarter-col .add-btn { opacity:0; width:100%; padding:3px; border:1px dashed var(--border); border-radius:4px; background:transparent; color:var(--text-muted); font-size:10px; cursor:pointer; transition:opacity 0.2s; font-family:inherit; margin-top:auto; }
         .quarter-col:hover .add-btn { opacity:1; }
+        .quarter-col.year-start { border-left:2px solid var(--border); }
         .quarter-col .add-btn:hover { border-color:var(--accent-green); color:var(--accent-green); }
         /* Progress bar */
         .progress-bar { height:3px; border-radius:2px; background:var(--border); overflow:hidden; flex:1; max-width:100px; }
         .progress-fill { height:100%; border-radius:2px; transition:width 0.3s; }
         /* Goals row */
-        .goals-row { display:grid; grid-template-columns:240px repeat(4,1fr); border-bottom:1px solid rgba(42,46,63,0.4); }
+        .goals-row { display:grid; grid-template-columns:240px repeat(12,minmax(110px,1fr)); border-bottom:1px solid rgba(42,46,63,0.4); }
         .goals-label { padding:4px 0 4px 42px; font-size:10px; color:var(--text-muted); font-weight:500; display:flex; align-items:center; }
         .goal-cell { padding:4px 6px; font-size:10px; color:var(--text-muted); font-style:italic; border-left:1px solid var(--border); min-height:24px; cursor:text; transition:all 0.15s; }
         .goal-cell:hover { background:rgba(74,222,128,0.03); }
@@ -166,7 +174,7 @@
         /* Workload View */
         .workload-view { padding:24px 48px; display:none; border-top:1px solid var(--border); }
         .workload-view.visible { display:block; }
-        .workload-grid { display:grid; grid-template-columns:160px repeat(4,1fr); gap:1px; background:var(--border); border-radius:8px; overflow:hidden; }
+        .workload-grid { display:grid; grid-template-columns:160px repeat(12,minmax(90px,1fr)); gap:1px; background:var(--border); border-radius:8px; overflow:hidden; }
         .wl-cell { padding:12px; background:var(--bg); }
         .wl-header { background:var(--surface); font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
         .wl-bar { height:8px; border-radius:4px; background:var(--border); margin-top:6px; overflow:hidden; }
@@ -184,9 +192,11 @@
         /* Responsive */
         @media(max-width:1200px) {
             .header,.content,.toolbar,.legend,.ideenpool,.footer,.team-section,.workload-view { padding-left:16px; padding-right:16px; }
-            .timeline-header { padding:0 16px; grid-template-columns:180px repeat(4,1fr); }
-            .stream-header,.goals-row { grid-template-columns:180px 1fr; }
-            .goals-row { grid-template-columns:180px repeat(4,1fr); }
+            .year-header,.quarter-row { padding:0 16px; }
+            .year-header { grid-template-columns:180px repeat(12,minmax(90px,1fr)); }
+            .quarter-row { grid-template-columns:180px repeat(12,minmax(90px,1fr)); }
+            .stream-header { grid-template-columns:180px 1fr; }
+            .goals-row { grid-template-columns:180px repeat(12,minmax(90px,1fr)); }
         }
         @media print {
             .toolbar,.add-btn,.toast { display:none !important; }
@@ -206,66 +216,66 @@
 // SEED DATA - All roadmap content as structured JSON
 // ============================================================
 const INITIAL_DATA = {
-  meta: { title:"GECKO.AI Roadmap 2026", year:2026, lastUpdated:"2026-02-26", version:2, currentQuarter:"Q1", nextReview:"2026-03-31" },
+  meta: { title:"GECKO.AI Roadmap 2026\u20132028", year:2026, lastUpdated:"2026-02-26", version:3, currentQuarter:"Q1-2026", nextReview:"2026-03-31" },
   team: [
     { id:"denny", name:"Denny Thiele", initials:"DT", role:"Head of AI & Development", color:"green", hoursPerQ:480 },
     { id:"philipp", name:"Philipp Leins", initials:"PL", role:"Developer", color:"blue", hoursPerQ:480 },
     { id:"tobias", name:"Tobias Hillscher", initials:"TH", role:"Projektleitung", color:"orange", hoursPerQ:320 }
   ],
   streams: [
-    { id:"visionhub", name:"VisionHub", icon:"\u{1F310}", subtitle:"Kernprodukt", color:"blue", order:0, goals:{Q1:"F\u00f6rderscreener V2 Testphase, KI-Framework starten",Q2:"Sales-Modul Konzept definieren",Q3:"Marketing-Modul MVP, Go-to-Market Discovery",Q4:"Wissensdatenbank Konzept"} },
-    { id:"intern", name:"Interne Tools & Automationen", icon:"\u2699", subtitle:"Effizienz & Prozesse", color:"purple", order:1, goals:{Q1:"Dashboard MVP, Schulungs-Videos",Q2:"Account-Codes, R42 HQ Anbindung",Q3:"Rechnungsautomation V2, Leadboard MVP",Q4:"Performance Marketing evaluieren"} },
-    { id:"produkte", name:"Standalone-Produkte", icon:"\u{1F680}", subtitle:"Neue Revenue-Streams", color:"orange", order:2, goals:{Q1:"Shopmelder Testphase",Q2:"Ausschreibungstool Discovery",Q3:"Ausschreibungstool MVP",Q4:""} },
-    { id:"ltm", name:"LTM Kundenprojekt", icon:"\u{1F3E1}", subtitle:"CRM + Automationen", color:"pink", order:3, goals:{Q1:"CRM Weiterentwicklung",Q2:"Chatbot V2 Planung",Q3:"Social Media Suite",Q4:""} },
-    { id:"projekte", name:"Externe Kundenprojekte", icon:"\u{1F4BC}", subtitle:"Laufend & Pipeline", color:"yellow", order:4, goals:{Q1:"Tag24 + CG Auftakt",Q2:"Pipeline aufbauen",Q3:"",Q4:""} },
-    { id:"infra", name:"Infrastruktur & Strategie", icon:"\u{1F5A5}", subtitle:"Foundation", color:"cyan", order:5, goals:{Q1:"Ausrichtung & Fokus",Q2:"Visionsmeeting",Q3:"",Q4:""} }
+    { id:"visionhub", name:"VisionHub", icon:"\u{1F310}", subtitle:"Kernprodukt", color:"blue", order:0, goals:{"Q1-2026":"F\u00f6rderscreener V2 Testphase, KI-Framework starten","Q2-2026":"Sales-Modul Konzept definieren","Q3-2026":"Marketing-Modul MVP, Go-to-Market Discovery","Q4-2026":"Wissensdatenbank Konzept"} },
+    { id:"intern", name:"Interne Tools & Automationen", icon:"\u2699", subtitle:"Effizienz & Prozesse", color:"purple", order:1, goals:{"Q1-2026":"Dashboard MVP, Schulungs-Videos","Q2-2026":"Account-Codes, R42 HQ Anbindung","Q3-2026":"Rechnungsautomation V2, Leadboard MVP","Q4-2026":"Performance Marketing evaluieren"} },
+    { id:"produkte", name:"Standalone-Produkte", icon:"\u{1F680}", subtitle:"Neue Revenue-Streams", color:"orange", order:2, goals:{"Q1-2026":"Shopmelder Testphase","Q2-2026":"Ausschreibungstool Discovery","Q3-2026":"Ausschreibungstool MVP","Q4-2026":""} },
+    { id:"ltm", name:"LTM Kundenprojekt", icon:"\u{1F3E1}", subtitle:"CRM + Automationen", color:"pink", order:3, goals:{"Q1-2026":"CRM Weiterentwicklung","Q2-2026":"Chatbot V2 Planung","Q3-2026":"Social Media Suite","Q4-2026":""} },
+    { id:"projekte", name:"Externe Kundenprojekte", icon:"\u{1F4BC}", subtitle:"Laufend & Pipeline", color:"yellow", order:4, goals:{"Q1-2026":"Tag24 + CG Auftakt","Q2-2026":"Pipeline aufbauen","Q3-2026":"","Q4-2026":""} },
+    { id:"infra", name:"Infrastruktur & Strategie", icon:"\u{1F5A5}", subtitle:"Foundation", color:"cyan", order:5, goals:{"Q1-2026":"Ausrichtung & Fokus","Q2-2026":"Visionsmeeting","Q3-2026":"","Q4-2026":""} }
   ],
   tasks: [
-    {id:"t01",streamId:"visionhub",quarter:"Q1",name:"F\u00f6rderscreener V2",description:"Weiterentwicklung des F\u00f6rderscreeners. Feedback einarbeiten, Prompts optimieren, Land-Recherche erweitern, NAS Katalog anbinden.",status:"test",size:"L",assignees:["denny","philipp"],priority:"high",risk:null,riskNote:"",order:0},
-    {id:"t02",streamId:"visionhub",quarter:"Q1",name:"KI-Assistenten Framework",description:"GPT Framework (Widgets + Links). GPT Plattform ist Teil dieses Frameworks.",status:"active",size:"XL",assignees:["denny"],priority:"high",risk:null,riskNote:"",order:1},
-    {id:"t03",streamId:"visionhub",quarter:"Q1",name:"BAFA-Berichte GPT",description:"GPT f\u00fcr BAFA-Berichte erfolgreich abgeschlossen.",status:"done",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t04",streamId:"visionhub",quarter:"Q2",name:"Sales-Modul",description:"Lead-Generator Konzept. Noch nicht definiert, vorerst Backlog.",status:"idea",size:"XXL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t05",streamId:"visionhub",quarter:"Q3",name:"Marketing-Modul",description:"Social Media Kanban, Content Management.",status:"planned",size:"XXL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t06",streamId:"visionhub",quarter:"Q3",name:"Go-to-Market Framework",description:"Vision: Automatisierte Produktentwicklungs-Pipeline. Ideen \u2192 Recherche \u2192 Validierung \u2192 Build \u2192 Publish \u2192 Marketing.",status:"idea",size:"XXL",assignees:["denny"],priority:"medium",risk:null,riskNote:"",order:1},
-    {id:"t07",streamId:"visionhub",quarter:"Q4",name:"Wissensdatenbank",description:"GECKO-\u00fcbergreifende Wissensdatenbank.",status:"idea",size:"XXL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t10",streamId:"intern",quarter:"Q1",name:"Internes Dashboard",description:"Zeitauswertungen, Projektauswertungen, Auslastung pro PL.",status:"active",size:"M",assignees:[],priority:"high",risk:null,riskNote:"",order:0},
-    {id:"t11",streamId:"intern",quarter:"Q1",name:"Schulungs-Videos",description:"Schulungsvideos f\u00fcr Team erstellen.",status:"active",size:"M",assignees:["denny","tobias"],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t12",streamId:"intern",quarter:"Q1",name:"Roadmap Gecko.AI",description:"Diese Roadmap pflegen und aktuell halten.",status:"active",size:"S",assignees:["denny"],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t13",streamId:"intern",quarter:"Q1",name:"Meeting-Protokoll Bot",description:"Automatisierter Meeting-Protokoll Bot.",status:"test",size:"S",assignees:[],priority:null,risk:null,riskNote:"",order:3},
-    {id:"t14",streamId:"intern",quarter:"Q2",name:"Account-Codes Slack",description:"Zoom/Canva/Dropbox Codes per Slack.",status:"planned",size:"S",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t15",streamId:"intern",quarter:"Q2",name:"Dokumentation Automationen",description:"Bestehende Automationen dokumentieren.",status:"idea",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t16",streamId:"intern",quarter:"Q2",name:"Video-Content-Produktion",description:"Aufbau Video-Content-Produktion.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t17",streamId:"intern",quarter:"Q2",name:"R42 HQ Anbindung",description:"Integration mit R42 HQ.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:3},
-    {id:"t18",streamId:"intern",quarter:"Q3",name:"Rechnungsautomation V2",description:"Kreditkartenabrechnung automatisieren.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t19",streamId:"intern",quarter:"Q3",name:"Kalender-Links f\u00fcr MA",description:"Kalender-Links f\u00fcr Mitarbeiter.",status:"idea",size:"S",assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t1a",streamId:"intern",quarter:"Q3",name:"R42 Leadboard \u2192 HQ",description:"Leadboard-Daten zu HQ synchronisieren. 10-14h MVP.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t1b",streamId:"intern",quarter:"Q4",name:"Performance Marketing",description:"Performance Marketing mit Marcus Mann.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t20",streamId:"produkte",quarter:"Q1",name:"Shopmelder (Standalone)",description:"Shopmelder als eigenst\u00e4ndige App f\u00fcr Citymanagement. MVP in Testphase.",status:"test",size:"M",assignees:["denny"],priority:"high",risk:null,riskNote:"",order:0},
-    {id:"t21",streamId:"produkte",quarter:"Q2",name:"Shopmelder Produktisierung",description:"Multi-Tenant Architektur, Citymanagement-Version.",status:"planned",size:"L",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t22",streamId:"produkte",quarter:"Q2",name:"Ausschreibungstool",description:"Ausschreibungen automatisiert scrapen und bewerten. MVP: 70-100h.",status:"planned",size:"XL",assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t23",streamId:"produkte",quarter:"Q3",name:"Ausschreibungstool MVP",description:"MVP Entwicklung.",status:"planned",size:"XL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t24",streamId:"produkte",quarter:"Q3",name:"QR-Management V2",description:"Erweiterung QR-Management.",status:"test",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t25",streamId:"produkte",quarter:"Q4",name:"Newscrawler R42 Alumni",description:"News-Crawler f\u00fcr R42 Alumni. MVP 51-68h.",status:"idea",size:"XL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t30",streamId:"ltm",quarter:"Q1",name:"LTM Automation Support",description:"Laufender Support f\u00fcr LTM Automationen.",status:"active",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t31",streamId:"ltm",quarter:"Q1",name:"LTM CRM Weiterentwicklung",description:"Zentrales CRM mit Dashboard, Angebotserstellung, Lead-Management.",status:"active",size:"L",assignees:["denny"],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t32",streamId:"ltm",quarter:"Q2",name:"LTM Chatbot V2",description:"Chatbot V2 Planung.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t33",streamId:"ltm",quarter:"Q3",name:"Social Media Content Suite",description:"Social Media Content Management f\u00fcr LTM.",status:"planned",size:"L",assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t34",streamId:"ltm",quarter:"Q4",name:"Leipzig Card Integration",description:"Leipzig Card Integration.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t40",streamId:"projekte",quarter:"Q1",name:"Tag24 KI Exploration",description:"KI Exploration Auftakt mit Tag24.",status:"active",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t41",streamId:"projekte",quarter:"Q1",name:"Levelbuild Abstimmung",description:"Strategische Abstimmung mit Levelbuild.",status:"active",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t42",streamId:"projekte",quarter:"Q1",name:"CG",description:"Neues Kundenprojekt. Erster Call KW 10.",status:"planned",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t43",streamId:"projekte",quarter:"Q2",name:"Neue Auftaktgespr\u00e4che",description:"Pipeline neuer Kundenprojekte.",status:"planned",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t44",streamId:"projekte",quarter:"Q2",name:"R42-Chatbot",description:"Chatbot f\u00fcr R42 Geb\u00e4ude + Accelerator.",status:"idea",size:"L",assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t45",streamId:"projekte",quarter:"Q2",name:"KI-Beratung & Automatisierung",description:"Strategische KI-Beratung + praxisnahe Team-Heranf\u00fchrung.",status:"planned",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t46",streamId:"projekte",quarter:"Q3",name:"Lehrerzimmer Dashboard",description:"Dashboard-Projekt nach Erstgespr\u00e4ch.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t47",streamId:"projekte",quarter:"Q4",name:"Booking Calendar",description:"Booking Calendar Evaluierung.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t50",streamId:"infra",quarter:"Q1",name:"Ausrichtung & Fokus 2026",description:"Strategische Ausrichtung.",status:"active",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t51",streamId:"infra",quarter:"Q1",name:"Leads Asana G.1/G.2",description:"Lead-Verwaltung in Asana.",status:"active",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t52",streamId:"infra",quarter:"Q2",name:"Visionsmeeting",description:"Strategisches Visionsmeeting.",status:"planned",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0},
-    {id:"t53",streamId:"intern",quarter:"Q2",name:"Coni Auswertungs-Dashboard",description:"Dashboard mit Auswertungen f\u00fcr Coni.",status:"idea",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:4},
-    {id:"t54",streamId:"intern",quarter:"Q2",name:"Marleens Dashboard",description:"Dashboard-Projekt f\u00fcr Marleen.",status:"idea",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:5},
-    {id:"t55",streamId:"visionhub",quarter:"Q3",name:"Social-Media Kanban",description:"VisionHub Social-Media Kanban Feature.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:2},
-    {id:"t56",streamId:"intern",quarter:"Q1",name:"Dokumente geteilte Ablage",description:"Zentrale Dokumentenablage f\u00fcr Team organisieren.",status:"idea",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:4}
+    {id:"t01",streamId:"visionhub",quarter:"Q1-2026",name:"F\u00f6rderscreener V2",description:"Weiterentwicklung des F\u00f6rderscreeners. Feedback einarbeiten, Prompts optimieren, Land-Recherche erweitern, NAS Katalog anbinden.",status:"test",size:"L",assignees:["denny","philipp"],priority:"high",risk:null,riskNote:"",order:0},
+    {id:"t02",streamId:"visionhub",quarter:"Q1-2026",name:"KI-Assistenten Framework",description:"GPT Framework (Widgets + Links). GPT Plattform ist Teil dieses Frameworks.",status:"active",size:"XL",assignees:["denny"],priority:"high",risk:null,riskNote:"",order:1},
+    {id:"t03",streamId:"visionhub",quarter:"Q1-2026",name:"BAFA-Berichte GPT",description:"GPT f\u00fcr BAFA-Berichte erfolgreich abgeschlossen.",status:"done",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t04",streamId:"visionhub",quarter:"Q2-2026",name:"Sales-Modul",description:"Lead-Generator Konzept. Noch nicht definiert, vorerst Backlog.",status:"idea",size:"XXL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t05",streamId:"visionhub",quarter:"Q3-2026",name:"Marketing-Modul",description:"Social Media Kanban, Content Management.",status:"planned",size:"XXL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t06",streamId:"visionhub",quarter:"Q3-2026",name:"Go-to-Market Framework",description:"Vision: Automatisierte Produktentwicklungs-Pipeline. Ideen \u2192 Recherche \u2192 Validierung \u2192 Build \u2192 Publish \u2192 Marketing.",status:"idea",size:"XXL",assignees:["denny"],priority:"medium",risk:null,riskNote:"",order:1},
+    {id:"t07",streamId:"visionhub",quarter:"Q4-2026",name:"Wissensdatenbank",description:"GECKO-\u00fcbergreifende Wissensdatenbank.",status:"idea",size:"XXL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t10",streamId:"intern",quarter:"Q1-2026",name:"Internes Dashboard",description:"Zeitauswertungen, Projektauswertungen, Auslastung pro PL.",status:"active",size:"M",assignees:[],priority:"high",risk:null,riskNote:"",order:0},
+    {id:"t11",streamId:"intern",quarter:"Q1-2026",name:"Schulungs-Videos",description:"Schulungsvideos f\u00fcr Team erstellen.",status:"active",size:"M",assignees:["denny","tobias"],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t12",streamId:"intern",quarter:"Q1-2026",name:"Roadmap Gecko.AI",description:"Diese Roadmap pflegen und aktuell halten.",status:"active",size:"S",assignees:["denny"],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t13",streamId:"intern",quarter:"Q1-2026",name:"Meeting-Protokoll Bot",description:"Automatisierter Meeting-Protokoll Bot.",status:"test",size:"S",assignees:[],priority:null,risk:null,riskNote:"",order:3},
+    {id:"t14",streamId:"intern",quarter:"Q2-2026",name:"Account-Codes Slack",description:"Zoom/Canva/Dropbox Codes per Slack.",status:"planned",size:"S",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t15",streamId:"intern",quarter:"Q2-2026",name:"Dokumentation Automationen",description:"Bestehende Automationen dokumentieren.",status:"idea",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t16",streamId:"intern",quarter:"Q2-2026",name:"Video-Content-Produktion",description:"Aufbau Video-Content-Produktion.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t17",streamId:"intern",quarter:"Q2-2026",name:"R42 HQ Anbindung",description:"Integration mit R42 HQ.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:3},
+    {id:"t18",streamId:"intern",quarter:"Q3-2026",name:"Rechnungsautomation V2",description:"Kreditkartenabrechnung automatisieren.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t19",streamId:"intern",quarter:"Q3-2026",name:"Kalender-Links f\u00fcr MA",description:"Kalender-Links f\u00fcr Mitarbeiter.",status:"idea",size:"S",assignees:[],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t1a",streamId:"intern",quarter:"Q3-2026",name:"R42 Leadboard \u2192 HQ",description:"Leadboard-Daten zu HQ synchronisieren. 10-14h MVP.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t1b",streamId:"intern",quarter:"Q4-2026",name:"Performance Marketing",description:"Performance Marketing mit Marcus Mann.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t20",streamId:"produkte",quarter:"Q1-2026",name:"Shopmelder (Standalone)",description:"Shopmelder als eigenst\u00e4ndige App f\u00fcr Citymanagement. MVP in Testphase.",status:"test",size:"M",assignees:["denny"],priority:"high",risk:null,riskNote:"",order:0},
+    {id:"t21",streamId:"produkte",quarter:"Q2-2026",name:"Shopmelder Produktisierung",description:"Multi-Tenant Architektur, Citymanagement-Version.",status:"planned",size:"L",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t22",streamId:"produkte",quarter:"Q2-2026",name:"Ausschreibungstool",description:"Ausschreibungen automatisiert scrapen und bewerten. MVP: 70-100h.",status:"planned",size:"XL",assignees:[],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t23",streamId:"produkte",quarter:"Q3-2026",name:"Ausschreibungstool MVP",description:"MVP Entwicklung.",status:"planned",size:"XL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t24",streamId:"produkte",quarter:"Q3-2026",name:"QR-Management V2",description:"Erweiterung QR-Management.",status:"test",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t25",streamId:"produkte",quarter:"Q4-2026",name:"Newscrawler R42 Alumni",description:"News-Crawler f\u00fcr R42 Alumni. MVP 51-68h.",status:"idea",size:"XL",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t30",streamId:"ltm",quarter:"Q1-2026",name:"LTM Automation Support",description:"Laufender Support f\u00fcr LTM Automationen.",status:"active",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t31",streamId:"ltm",quarter:"Q1-2026",name:"LTM CRM Weiterentwicklung",description:"Zentrales CRM mit Dashboard, Angebotserstellung, Lead-Management.",status:"active",size:"L",assignees:["denny"],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t32",streamId:"ltm",quarter:"Q2-2026",name:"LTM Chatbot V2",description:"Chatbot V2 Planung.",status:"planned",size:"M",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t33",streamId:"ltm",quarter:"Q3-2026",name:"Social Media Content Suite",description:"Social Media Content Management f\u00fcr LTM.",status:"planned",size:"L",assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t34",streamId:"ltm",quarter:"Q4-2026",name:"Leipzig Card Integration",description:"Leipzig Card Integration.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t40",streamId:"projekte",quarter:"Q1-2026",name:"Tag24 KI Exploration",description:"KI Exploration Auftakt mit Tag24.",status:"active",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t41",streamId:"projekte",quarter:"Q1-2026",name:"Levelbuild Abstimmung",description:"Strategische Abstimmung mit Levelbuild.",status:"active",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t42",streamId:"projekte",quarter:"Q1-2026",name:"CG",description:"Neues Kundenprojekt. Erster Call KW 10.",status:"planned",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t43",streamId:"projekte",quarter:"Q2-2026",name:"Neue Auftaktgespr\u00e4che",description:"Pipeline neuer Kundenprojekte.",status:"planned",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t44",streamId:"projekte",quarter:"Q2-2026",name:"R42-Chatbot",description:"Chatbot f\u00fcr R42 Geb\u00e4ude + Accelerator.",status:"idea",size:"L",assignees:[],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t45",streamId:"projekte",quarter:"Q2-2026",name:"KI-Beratung & Automatisierung",description:"Strategische KI-Beratung + praxisnahe Team-Heranf\u00fchrung.",status:"planned",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t46",streamId:"projekte",quarter:"Q3-2026",name:"Lehrerzimmer Dashboard",description:"Dashboard-Projekt nach Erstgespr\u00e4ch.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t47",streamId:"projekte",quarter:"Q4-2026",name:"Booking Calendar",description:"Booking Calendar Evaluierung.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t50",streamId:"infra",quarter:"Q1-2026",name:"Ausrichtung & Fokus 2026",description:"Strategische Ausrichtung.",status:"active",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t51",streamId:"infra",quarter:"Q1-2026",name:"Leads Asana G.1/G.2",description:"Lead-Verwaltung in Asana.",status:"active",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:1},
+    {id:"t52",streamId:"infra",quarter:"Q2-2026",name:"Visionsmeeting",description:"Strategisches Visionsmeeting.",status:"planned",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t53",streamId:"intern",quarter:"Q2-2026",name:"Coni Auswertungs-Dashboard",description:"Dashboard mit Auswertungen f\u00fcr Coni.",status:"idea",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:4},
+    {id:"t54",streamId:"intern",quarter:"Q2-2026",name:"Marleens Dashboard",description:"Dashboard-Projekt f\u00fcr Marleen.",status:"idea",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:5},
+    {id:"t55",streamId:"visionhub",quarter:"Q3-2026",name:"Social-Media Kanban",description:"VisionHub Social-Media Kanban Feature.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t56",streamId:"intern",quarter:"Q1-2026",name:"Dokumente geteilte Ablage",description:"Zentrale Dokumentenablage f\u00fcr Team organisieren.",status:"idea",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:4}
   ],
   milestones: [],
   ideenpool: [
@@ -397,8 +407,11 @@ const Store = {
 const SIZE_HOURS = {S:5,M:15,L:25,XL:40,XXL:75};
 const STATUS_LABELS = {done:'Fertig',active:'Aktiv',test:'Test',planned:'Geplant',idea:'Idee'};
 const STATUS_ORDER = ['idea','planned','active','test','done'];
-const QUARTERS = ['Q1','Q2','Q3','Q4'];
+const YEARS = [2026,2027,2028];
+const QUARTERS = ['Q1-2026','Q2-2026','Q3-2026','Q4-2026','Q1-2027','Q2-2027','Q3-2027','Q4-2027','Q1-2028','Q2-2028','Q3-2028','Q4-2028'];
 const Q_MONTHS = {Q1:'Jan\u2013M\u00e4r',Q2:'Apr\u2013Jun',Q3:'Jul\u2013Sep',Q4:'Okt\u2013Dez'};
+function qLabel(q){return q.split('-')[0];}
+function qYear(q){return q.split('-')[1];}
 
 function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
@@ -475,7 +488,7 @@ const Renderer = {
     const footer = document.createElement('div');
     footer.className = 'footer';
     const fd = document.createElement('div');
-    fd.textContent = 'GECKO.AI Roadmap 2026 \u00b7 ' + data.meta.lastUpdated + ' \u00b7 Drag&Drop \u00b7 Auto-Save \u00b7 Cmd+Z=Undo';
+    fd.textContent = 'GECKO.AI Roadmap 2026\u20132028 \u00b7 ' + data.meta.lastUpdated + ' \u00b7 Drag&Drop \u00b7 Auto-Save \u00b7 Cmd+Z=Undo';
     footer.appendChild(fd);
     app.appendChild(footer);
 
@@ -619,16 +632,35 @@ const Renderer = {
   },
 
   _buildTimelineHeader(el, data) {
-    const label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = 'Produkt-Stream';
-    el.appendChild(label);
+    // Year header row
+    const yearRow = document.createElement('div');
+    yearRow.className = 'year-header';
+    const yLbl = document.createElement('div');
+    yLbl.className = 'label';
+    yearRow.appendChild(yLbl);
+    YEARS.forEach(y=>{
+      const yh = document.createElement('div');
+      yh.className = 'year-cell';
+      if(y===data.meta.year) yh.classList.add('current');
+      yh.textContent = String(y);
+      yearRow.appendChild(yh);
+    });
+    el.appendChild(yearRow);
+
+    // Quarter header row
+    const qRow = document.createElement('div');
+    qRow.className = 'quarter-row';
+    const qLbl = document.createElement('div');
+    qLbl.className = 'label';
+    qLbl.textContent = 'Produkt-Stream';
+    qRow.appendChild(qLbl);
     QUARTERS.forEach(q=>{
+      const ql = qLabel(q);
       const qh = document.createElement('div');
-      qh.className = 'quarter-header' + (q===data.meta.currentQuarter?' current':'');
+      qh.className = 'quarter-header' + (q===data.meta.currentQuarter?' current':'') + (ql==='Q1'?' year-start':'');
       const qn = document.createElement('div');
       qn.className = 'q-name';
-      qn.textContent = q+' '+data.meta.year+' ';
+      qn.textContent = ql;
       if(q===data.meta.currentQuarter) {
         const now = document.createElement('span');
         now.className = 'now-indicator';
@@ -638,10 +670,11 @@ const Renderer = {
       qh.appendChild(qn);
       const qm = document.createElement('div');
       qm.className = 'q-months';
-      qm.textContent = Q_MONTHS[q];
+      qm.textContent = Q_MONTHS[ql];
       qh.appendChild(qm);
-      el.appendChild(qh);
+      qRow.appendChild(qh);
     });
+    el.appendChild(qRow);
   },
 
   _buildStream(s, filteredTasks, data) {
@@ -703,7 +736,7 @@ const Renderer = {
 
     QUARTERS.forEach(q=>{
       const col = document.createElement('div');
-      col.className = 'quarter-col';
+      col.className = 'quarter-col' + (qLabel(q)==='Q1'?' year-start':'');
       col.dataset.streamId = s.id;
       col.dataset.quarter = q;
 
@@ -919,7 +952,7 @@ const Renderer = {
     QUARTERS.forEach(q=>{
       const hq = document.createElement('div');
       hq.className = 'wl-cell wl-header';
-      hq.textContent = q;
+      hq.textContent = qLabel(q)+' '+qYear(q);
       grid.appendChild(hq);
     });
 
@@ -1100,7 +1133,7 @@ const Editor = {
     const row2=document.createElement('div');
     row2.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px';
     [{label:'Stream',id:'m-stream',opts:State.data.streams.map(s=>({v:s.id,l:s.name,sel:t.streamId===s.id}))},
-     {label:'Quartal',id:'m-quarter',opts:QUARTERS.map(q=>({v:q,l:q,sel:t.quarter===q}))}
+     {label:'Quartal',id:'m-quarter',opts:QUARTERS.map(q=>({v:q,l:qLabel(q)+' '+qYear(q),sel:t.quarter===q}))}
     ].forEach(sel=>{
       const wrap=document.createElement('div');
       const lbl=document.createElement('label');lbl.textContent=sel.label;wrap.appendChild(lbl);
@@ -1215,8 +1248,8 @@ const Editor = {
     if(!idea) return;
     const stream=prompt('Stream? (visionhub, intern, produkte, ltm, projekte, infra)','visionhub');
     if(!stream||!State.data.streams.find(s=>s.id===stream)){alert('Ung\u00fcltiger Stream');return;}
-    const quarter=prompt('Quartal? (Q1, Q2, Q3, Q4)','Q2');
-    if(!QUARTERS.includes(quarter)){alert('Ung\u00fcltiges Quartal');return;}
+    const quarter=prompt('Quartal? (z.B. Q1-2026, Q2-2027, Q3-2028)',QUARTERS[0]);
+    if(!QUARTERS.includes(quarter)){alert('Ung\u00fcltiges Quartal. Format: Q1-2026');return;}
     State.mutate(d=>{
       d.tasks.push({id:uid(),streamId:stream,quarter,name:idea.name,description:idea.description,status:'idea',size:null,assignees:[],priority:null,risk:null,riskNote:'',order:99});
       d.ideenpool=d.ideenpool.filter(i=>i.id!==id);
@@ -1243,6 +1276,12 @@ const Filters = {
 const App = {
   init() {
     const saved=Store.load();
+    if(saved){
+      // Migrate old quarter format (Q1 -> Q1-2026)
+      if(saved.tasks) saved.tasks.forEach(t=>{if(t.quarter&&!t.quarter.includes('-'))t.quarter=t.quarter+'-2026';});
+      if(saved.streams) saved.streams.forEach(s=>{if(s.goals){const ng={};Object.keys(s.goals).forEach(k=>{ng[k.includes('-')?k:k+'-2026']=s.goals[k];});s.goals=ng;}});
+      if(saved.meta&&saved.meta.currentQuarter&&!saved.meta.currentQuarter.includes('-'))saved.meta.currentQuarter=saved.meta.currentQuarter+'-2026';
+    }
     State.init(saved||INITIAL_DATA);
     State.subscribe(d=>{Store.save(d);Renderer.render(d);});
     Renderer.render(State.data);
