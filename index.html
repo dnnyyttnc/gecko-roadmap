@@ -176,6 +176,11 @@
         /* Toast */
         .toast { position:fixed; bottom:24px; right:24px; padding:10px 18px; border-radius:8px; background:var(--surface); border:1px solid var(--accent-green); color:var(--accent-green); font-size:12px; font-weight:500; z-index:2000; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; }
         .toast.show { opacity:1; transform:translateY(0); }
+        .asana-link { color:var(--text-muted); text-decoration:none; font-size:10px; opacity:0; transition:opacity 0.2s; margin-left:auto; padding:0 2px; }
+        .asana-link:hover { color:var(--accent-green); }
+        .task-item:hover .asana-link { opacity:0.7; }
+        .idea-asana { color:var(--text-muted); text-decoration:none; font-size:10px; opacity:0.5; }
+        .idea-asana:hover { color:var(--accent-green); opacity:1; }
         /* Responsive */
         @media(max-width:1200px) {
             .header,.content,.toolbar,.legend,.ideenpool,.footer,.team-section,.workload-view { padding-left:16px; padding-right:16px; }
@@ -201,7 +206,7 @@
 // SEED DATA - All roadmap content as structured JSON
 // ============================================================
 const INITIAL_DATA = {
-  meta: { title:"GECKO.AI Roadmap 2026", year:2026, lastUpdated:"2026-02-25", version:1, currentQuarter:"Q1", nextReview:"2026-03-31" },
+  meta: { title:"GECKO.AI Roadmap 2026", year:2026, lastUpdated:"2026-02-26", version:2, currentQuarter:"Q1", nextReview:"2026-03-31" },
   team: [
     { id:"denny", name:"Denny Thiele", initials:"DT", role:"Head of AI & Development", color:"green", hoursPerQ:480 },
     { id:"philipp", name:"Philipp Leins", initials:"PL", role:"Developer", color:"blue", hoursPerQ:480 },
@@ -256,7 +261,11 @@ const INITIAL_DATA = {
     {id:"t47",streamId:"projekte",quarter:"Q4",name:"Booking Calendar",description:"Booking Calendar Evaluierung.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:0},
     {id:"t50",streamId:"infra",quarter:"Q1",name:"Ausrichtung & Fokus 2026",description:"Strategische Ausrichtung.",status:"active",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0},
     {id:"t51",streamId:"infra",quarter:"Q1",name:"Leads Asana G.1/G.2",description:"Lead-Verwaltung in Asana.",status:"active",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:1},
-    {id:"t52",streamId:"infra",quarter:"Q2",name:"Visionsmeeting",description:"Strategisches Visionsmeeting.",status:"planned",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0}
+    {id:"t52",streamId:"infra",quarter:"Q2",name:"Visionsmeeting",description:"Strategisches Visionsmeeting.",status:"planned",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:0},
+    {id:"t53",streamId:"intern",quarter:"Q2",name:"Coni Auswertungs-Dashboard",description:"Dashboard mit Auswertungen f\u00fcr Coni.",status:"idea",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:4},
+    {id:"t54",streamId:"intern",quarter:"Q2",name:"Marleens Dashboard",description:"Dashboard-Projekt f\u00fcr Marleen.",status:"idea",size:null,assignees:["denny"],priority:null,risk:null,riskNote:"",order:5},
+    {id:"t55",streamId:"visionhub",quarter:"Q3",name:"Social-Media Kanban",description:"VisionHub Social-Media Kanban Feature.",status:"idea",size:null,assignees:[],priority:null,risk:null,riskNote:"",order:2},
+    {id:"t56",streamId:"intern",quarter:"Q1",name:"Dokumente geteilte Ablage",description:"Zentrale Dokumentenablage f\u00fcr Team organisieren.",status:"idea",size:null,assignees:["tobias"],priority:null,risk:null,riskNote:"",order:4}
   ],
   milestones: [],
   ideenpool: [
@@ -268,8 +277,63 @@ const INITIAL_DATA = {
     {id:"i06",name:"Booking Calendar Dashboard",description:"Airbnb/Booking.com Sync"},
     {id:"i07",name:"\u00dcbergabeprotokoll Brevo",description:"Dokumentation"},
     {id:"i08",name:"Lead-Projekte vereinheitlichen",description:"R\u00fccksprache Vertrieb"},
-    {id:"i09",name:"Spreadgroup Wartung",description:"Monitoring + Fixes"}
+    {id:"i09",name:"Spreadgroup Wartung",description:"Monitoring + Fixes"},
+    {id:"i10",name:"Lead-Generator",description:"Entwicklung eines Lead-Generators"},
+    {id:"i11",name:"Newsletter-Framework",description:"Themenspezifische News automatisiert"},
+    {id:"i12",name:"KI-Berichtgenerator V2",description:"F\u00f6rderberichte inkl. BAFA (V2)"}
   ]
+};
+
+// ============================================================
+// ASANA LINK MAP - Task/Idea ID -> Asana URL
+// ============================================================
+const ASANA_LINKS = {
+  t01:"https://app.asana.com/0/1207704626046968/1210810379616234",
+  t02:"https://app.asana.com/0/1207704626046968/1212509534050623",
+  t03:"https://app.asana.com/0/1207704626046968/1213199105326509",
+  t07:"https://app.asana.com/0/1207704626046968/1211408925515646",
+  t11:"https://app.asana.com/0/1207704626046968/1212975023437414",
+  t12:"https://app.asana.com/0/1207704626046968/1213239238211256",
+  t13:"https://app.asana.com/0/1207704626046968/1207704634388265",
+  t14:"https://app.asana.com/0/1207704626046968/1210325811551463",
+  t15:"https://app.asana.com/0/1207704626046968/1211323683983939",
+  t17:"https://app.asana.com/0/1207704626046968/1212373889475550",
+  t18:"https://app.asana.com/0/1207704626046968/1209441348511856",
+  t19:"https://app.asana.com/0/1207704626046968/1212205625277411",
+  t1a:"https://app.asana.com/0/1207704626046968/1210067636350670",
+  t1b:"https://app.asana.com/0/1207704626046968/1211383602523108",
+  t20:"https://app.asana.com/0/1207704626046968/1210864823214795",
+  t21:"https://app.asana.com/0/1207704626046968/1211529543285479",
+  t22:"https://app.asana.com/0/1207704626046968/1210602421646770",
+  t23:"https://app.asana.com/0/1207704626046968/1210602421646770",
+  t24:"https://app.asana.com/0/1207704626046968/1210714440358637",
+  t25:"https://app.asana.com/0/1207704626046968/1209182916548765",
+  t30:"https://app.asana.com/0/1207704626046968/1210108115538561",
+  t40:"https://app.asana.com/0/1207704626046968/1212998898332279",
+  t41:"https://app.asana.com/0/1207704626046968/1213239238211253",
+  t42:"https://app.asana.com/0/1207704626046968/1213135276602844",
+  t44:"https://app.asana.com/0/1207704626046968/1210044696288198",
+  t46:"https://app.asana.com/0/1207704626046968/1211410620474698",
+  t47:"https://app.asana.com/0/1207704626046968/1210065665974708",
+  t50:"https://app.asana.com/0/1207704626046968/1211588689177729",
+  t51:"https://app.asana.com/0/1207704626046968/1208053773805082",
+  t52:"https://app.asana.com/0/1207704626046968/1212451737724928",
+  t53:"https://app.asana.com/0/1207704626046968/1210001420419523",
+  t54:"https://app.asana.com/0/1207704626046968/1207704634388269",
+  t55:"https://app.asana.com/0/1207704626046968/1210714400402170",
+  t56:"https://app.asana.com/0/1207704626046968/1211492871551419",
+  i01:"https://app.asana.com/0/1207704626046968/1207998785482645",
+  i02:"https://app.asana.com/0/1207704626046968/1209653366575726",
+  i03:"https://app.asana.com/0/1207704626046968/1207705325534044",
+  i04:"https://app.asana.com/0/1207704626046968/1208166651000931",
+  i05:"https://app.asana.com/0/1207704626046968/1211312895649932",
+  i06:"https://app.asana.com/0/1207704626046968/1210065665974708",
+  i07:"https://app.asana.com/0/1207704626046968/1210398583617748",
+  i08:"https://app.asana.com/0/1207704626046968/1210810389408216",
+  i09:"https://app.asana.com/0/1207704626046968/1210056055171220",
+  i10:"https://app.asana.com/0/1207704626046968/1207996684046268",
+  i11:"https://app.asana.com/0/1207704626046968/1207776164949562",
+  i12:"https://app.asana.com/0/1207704626046968/1209441348511851"
 };
 
 // ============================================================
@@ -740,6 +804,18 @@ const Renderer = {
       bottom.appendChild(aWrap);
     }
 
+    if(ASANA_LINKS[t.id]) {
+      const aLink = document.createElement('a');
+      aLink.className = 'asana-link';
+      aLink.href = ASANA_LINKS[t.id];
+      aLink.target = '_blank';
+      aLink.rel = 'noopener';
+      aLink.title = 'In Asana \u00f6ffnen';
+      aLink.textContent = '\u{1F517}';
+      aLink.onclick = function(e){ e.stopPropagation(); };
+      bottom.appendChild(aLink);
+    }
+
     el.appendChild(bottom);
     return el;
   },
@@ -789,6 +865,16 @@ const Renderer = {
       card.appendChild(desc);
       const actions = document.createElement('div');
       actions.className = 'idea-actions';
+      if(ASANA_LINKS[i.id]) {
+        const aLink = document.createElement('a');
+        aLink.className = 'idea-asana';
+        aLink.href = ASANA_LINKS[i.id];
+        aLink.target = '_blank';
+        aLink.rel = 'noopener';
+        aLink.title = 'In Asana \u00f6ffnen';
+        aLink.textContent = '\u{1F517} Asana';
+        actions.appendChild(aLink);
+      }
       const promBtn = document.createElement('button');
       promBtn.className = 'toolbar-btn';
       promBtn.style.fontSize = '10px';
@@ -971,6 +1057,19 @@ const Editor = {
     const h3=document.createElement('h3');
     h3.textContent='Thema bearbeiten';
     modal.appendChild(h3);
+
+    if(ASANA_LINKS[taskId]) {
+      const aRow=document.createElement('div');
+      aRow.style.cssText='margin-bottom:12px';
+      const aLink=document.createElement('a');
+      aLink.href=ASANA_LINKS[taskId];
+      aLink.target='_blank';
+      aLink.rel='noopener';
+      aLink.style.cssText='color:var(--accent-green);font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px';
+      aLink.textContent='\u{1F517} In Asana \u00f6ffnen';
+      aRow.appendChild(aLink);
+      modal.appendChild(aRow);
+    }
 
     const fields=[
       {label:'Name',type:'text',id:'m-name',value:t.name},
