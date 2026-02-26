@@ -49,30 +49,41 @@
         .search-input:focus { border-color:var(--accent-green); }
         .toolbar-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
         /* Timeline Header */
+        /* Scroll wrapper */
+        .main-scroll { position:relative; overflow-x:auto; overflow-y:visible; scroll-behavior:smooth; }
+        .main-scroll::-webkit-scrollbar { height:6px; }
+        .main-scroll::-webkit-scrollbar-track { background:var(--bg); }
+        .main-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+        .main-scroll::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
+        .scroll-arrow { position:sticky; top:50%; z-index:20; width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.7; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+        .scroll-arrow:hover { opacity:1; background:var(--accent-green-dim); border-color:var(--accent-green); color:var(--accent-green); }
+        .scroll-left { position:fixed; left:12px; top:50%; transform:translateY(-50%); z-index:20; }
+        .scroll-right { position:fixed; right:12px; top:50%; transform:translateY(-50%); z-index:20; }
+        /* Timeline header */
         .timeline-header { position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--border); }
-        .year-header { display:grid; grid-template-columns:240px repeat(12,minmax(110px,1fr)); padding:0 48px; }
-        .year-header .label { padding:6px 0 0; }
-        .year-cell { grid-column:span 4; text-align:center; font-size:13px; font-weight:700; padding:6px 0 2px; color:var(--text-muted); border-left:2px solid var(--border); }
+        .year-header { display:grid; grid-template-columns:220px repeat(12,300px); padding:0 48px; }
+        .year-header .label { padding:6px 0 0; position:sticky; left:0; background:var(--bg); z-index:5; }
+        .year-cell { grid-column:span 4; text-align:center; font-size:14px; font-weight:700; padding:8px 0 2px; color:var(--text-muted); border-left:2px solid var(--border); }
         .year-cell:first-of-type { border-left:none; }
         .year-cell.current { color:var(--accent-green); }
-        .quarter-row { display:grid; grid-template-columns:240px repeat(12,minmax(110px,1fr)); padding:0 48px; }
-        .quarter-row .label { padding:8px 0; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:600; }
-        .quarter-header { padding:8px 6px; text-align:center; border-left:1px solid var(--border); }
+        .quarter-row { display:grid; grid-template-columns:220px repeat(12,300px); padding:0 48px; }
+        .quarter-row .label { padding:10px 0; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:600; position:sticky; left:0; background:var(--bg); z-index:5; }
+        .quarter-header { padding:10px 12px; text-align:center; border-left:1px solid var(--border); }
         .quarter-header.year-start { border-left:2px solid var(--border); }
-        .quarter-header .q-name { font-size:13px; font-weight:700; margin-bottom:1px; }
-        .quarter-header .q-months { font-size:10px; color:var(--text-muted); }
+        .quarter-header .q-name { font-size:14px; font-weight:700; margin-bottom:2px; }
+        .quarter-header .q-months { font-size:11px; color:var(--text-muted); }
         .quarter-header.current { background:var(--accent-green-dim); }
         .quarter-header.current .q-name { color:var(--accent-green); }
-        .now-indicator { font-size:8px; font-weight:700; color:var(--accent-green); background:var(--accent-green-dim); padding:1px 4px; border-radius:3px; letter-spacing:0.5px; }
+        .now-indicator { font-size:9px; font-weight:700; color:var(--accent-green); background:var(--accent-green-dim); padding:2px 6px; border-radius:3px; letter-spacing:0.5px; }
         /* Content */
-        .content { padding:0 48px; overflow-x:auto; }
+        .content { padding:0 48px; }
         .stream-section { border-bottom:1px solid var(--border); }
-        .stream-header { display:grid; grid-template-columns:240px 1fr; min-height:60px; }
-        .stream-info { padding:14px 0; display:flex; align-items:center; gap:10px; }
+        .stream-header { display:grid; grid-template-columns:220px 1fr; min-height:60px; }
+        .stream-info { padding:14px 0; display:flex; align-items:center; gap:10px; position:sticky; left:0; background:var(--bg); z-index:3; }
         .stream-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
         .stream-name { font-size:13px; font-weight:600; }
         .stream-meta { font-size:11px; color:var(--text-muted); display:flex; align-items:center; gap:8px; }
-        .stream-timeline { display:grid; grid-template-columns:repeat(12,minmax(110px,1fr)); }
+        .stream-timeline { display:grid; grid-template-columns:repeat(12,300px); }
         .quarter-col { border-left:1px solid var(--border); min-height:60px; padding:6px; display:flex; flex-direction:column; gap:4px; position:relative; }
         .quarter-col .add-btn { opacity:0; width:100%; padding:3px; border:1px dashed var(--border); border-radius:4px; background:transparent; color:var(--text-muted); font-size:10px; cursor:pointer; transition:opacity 0.2s; font-family:inherit; margin-top:auto; }
         .quarter-col:hover .add-btn { opacity:1; }
@@ -82,8 +93,8 @@
         .progress-bar { height:3px; border-radius:2px; background:var(--border); overflow:hidden; flex:1; max-width:100px; }
         .progress-fill { height:100%; border-radius:2px; transition:width 0.3s; }
         /* Goals row */
-        .goals-row { display:grid; grid-template-columns:240px repeat(12,minmax(110px,1fr)); border-bottom:1px solid rgba(42,46,63,0.4); }
-        .goals-label { padding:4px 0 4px 42px; font-size:10px; color:var(--text-muted); font-weight:500; display:flex; align-items:center; }
+        .goals-row { display:grid; grid-template-columns:220px repeat(12,300px); border-bottom:1px solid rgba(42,46,63,0.4); }
+        .goals-label { padding:4px 0 4px 42px; font-size:10px; color:var(--text-muted); font-weight:500; display:flex; align-items:center; position:sticky; left:0; background:var(--bg); z-index:3; }
         .goal-cell { padding:4px 6px; font-size:10px; color:var(--text-muted); font-style:italic; border-left:1px solid var(--border); min-height:24px; cursor:text; transition:all 0.15s; }
         .goal-cell:hover { background:rgba(74,222,128,0.03); }
         .goal-cell:focus { outline:none; color:var(--text); background:rgba(74,222,128,0.06); font-style:normal; }
@@ -174,7 +185,7 @@
         /* Workload View */
         .workload-view { padding:24px 48px; display:none; border-top:1px solid var(--border); }
         .workload-view.visible { display:block; }
-        .workload-grid { display:grid; grid-template-columns:160px repeat(12,minmax(90px,1fr)); gap:1px; background:var(--border); border-radius:8px; overflow:hidden; }
+        .workload-grid { display:grid; grid-template-columns:160px repeat(12,240px); gap:1px; background:var(--border); border-radius:8px; overflow:hidden; overflow-x:auto; }
         .wl-cell { padding:12px; background:var(--bg); }
         .wl-header { background:var(--surface); font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
         .wl-bar { height:8px; border-radius:4px; background:var(--border); margin-top:6px; overflow:hidden; }
@@ -192,11 +203,13 @@
         /* Responsive */
         @media(max-width:1200px) {
             .header,.content,.toolbar,.legend,.ideenpool,.footer,.team-section,.workload-view { padding-left:16px; padding-right:16px; }
+            .header,.content,.toolbar,.legend,.ideenpool,.footer,.team-section,.workload-view { padding-left:16px; padding-right:16px; }
             .year-header,.quarter-row { padding:0 16px; }
-            .year-header { grid-template-columns:180px repeat(12,minmax(90px,1fr)); }
-            .quarter-row { grid-template-columns:180px repeat(12,minmax(90px,1fr)); }
-            .stream-header { grid-template-columns:180px 1fr; }
-            .goals-row { grid-template-columns:180px repeat(12,minmax(90px,1fr)); }
+            .year-header { grid-template-columns:160px repeat(12,260px); }
+            .quarter-row { grid-template-columns:160px repeat(12,260px); }
+            .stream-header { grid-template-columns:160px 1fr; }
+            .stream-timeline { grid-template-columns:repeat(12,260px); }
+            .goals-row { grid-template-columns:160px repeat(12,260px); }
         }
         @media print {
             .toolbar,.add-btn,.toast { display:none !important; }
@@ -451,11 +464,16 @@ const Renderer = {
     this._buildToolbar(toolbar, data, f);
     app.appendChild(toolbar);
 
+    // Scroll wrapper (timeline header + content scroll together)
+    const scroll = document.createElement('div');
+    scroll.className = 'main-scroll';
+    scroll.id = 'main-scroll';
+
     // Timeline header
     const tlHeader = document.createElement('div');
     tlHeader.className = 'timeline-header';
     this._buildTimelineHeader(tlHeader, data);
-    app.appendChild(tlHeader);
+    scroll.appendChild(tlHeader);
 
     // Content
     const content = document.createElement('div');
@@ -463,7 +481,23 @@ const Renderer = {
     data.streams.sort((a,b)=>a.order-b.order).forEach(s => {
       content.appendChild(this._buildStream(s, tasks, data));
     });
-    app.appendChild(content);
+    scroll.appendChild(content);
+
+    // Scroll nav arrows
+    const navLeft = document.createElement('button');
+    navLeft.className = 'scroll-arrow scroll-left';
+    navLeft.textContent = '\u2039';
+    navLeft.title = 'Vorheriges Jahr';
+    navLeft.onclick = ()=>App.scrollYear(-1);
+    scroll.appendChild(navLeft);
+    const navRight = document.createElement('button');
+    navRight.className = 'scroll-arrow scroll-right';
+    navRight.textContent = '\u203A';
+    navRight.title = 'N\u00e4chstes Jahr';
+    navRight.onclick = ()=>App.scrollYear(1);
+    scroll.appendChild(navRight);
+
+    app.appendChild(scroll);
 
     // Workload
     const wl = document.createElement('div');
@@ -643,6 +677,8 @@ const Renderer = {
       yh.className = 'year-cell';
       if(y===data.meta.year) yh.classList.add('current');
       yh.textContent = String(y);
+      yh.style.cursor = 'pointer';
+      yh.onclick = ()=>App.scrollToYear(y);
       yearRow.appendChild(yh);
     });
     el.appendChild(yearRow);
@@ -1312,6 +1348,20 @@ const App = {
   toggleWorkload() {
     const el=document.getElementById('workload');
     el.classList.toggle('visible');
+  },
+  scrollYear(dir) {
+    const sc=document.getElementById('main-scroll');
+    if(!sc) return;
+    // Scroll by 4 quarter widths (one year = 4 * 300px)
+    sc.scrollBy({left:dir*1200,behavior:'smooth'});
+  },
+  scrollToYear(year) {
+    const sc=document.getElementById('main-scroll');
+    if(!sc) return;
+    const idx=YEARS.indexOf(year);
+    if(idx<0) return;
+    // Each quarter is 300px, label is 220px + 48px padding
+    sc.scrollTo({left:idx*1200,behavior:'smooth'});
   }
 };
 
